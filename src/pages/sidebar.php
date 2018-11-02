@@ -8,7 +8,9 @@
 <?php
 
 for ($i=0; $i < 10; $i++) {
-    echo '<tr><td>'. $scoreboard[$i][0] .'</td><td>'. $scoreboard[$i][1] .'</td></tr>';
+    if (isset($scoreboard[$i])) {
+        echo '<tr><td>'. $scoreboard[$i][0] .'</td><td>'. $scoreboard[$i][1] .'</td></tr>';
+    }
 }
 
 ?>

@@ -1,8 +1,7 @@
 // init variables
 var moveAllowed = true;
 var moveCount   = 0;
-var dead        = false
-var name        = '';
+var dead        = false;
 
 // entity init
 const colours = {
@@ -15,18 +14,65 @@ const colours = {
 var enemy = {
     pos:     8,
     prevPos: 8,
+    move: function(dir) {
+        switch (dir) {
+            case 0: // <
+            if (![0, 3, 6].includes(enemy.pos)) {
+                enemy.prevPos = enemy.pos; // save the previous pos
+                enemy.pos--; // move the enemy
+                return 1;
+            } else {
+                return 0;
+            }
+            break;
+
+            case 1: // ^
+            if (![0, 1, 2].includes(enemy.pos)) {
+                enemy.prevPos = enemy.pos; // save the previous pos
+                enemy.pos -= 3; // move the enemy
+                return 1;
+            } else {
+                return 0;
+            }
+            break;
+
+            case 2: // >
+            if (![2, 5, 8].includes(enemy.pos)) {
+                enemy.prevPos = enemy.pos; // save the previous pos
+                enemy.pos++; // move the enemy
+                return 1;
+            } else {
+                return 0;
+            }
+            break;
+
+            case 3: // v
+            if (![6, 7, 8].includes(enemy.pos)) {
+                enemy.prevPos = enemy.pos; // save the previous pos
+                enemy.pos += 3; // move the enemy
+                return 1;
+            } else {
+                return 0;
+            }
+            break;
+
+            default:
+            return false;
+            break;
+        }
+    }
 }
 
 var player = {
-    colour:  '#7192ef',
     pos:     0,
     prevPos: 0,
-    move: function(key) {
-        switch (key) {
+    move: function(dir) {
+        switch (dir) {
             case 0: // <
             if (![0, 3, 6].includes(player.pos)) {
                 player.prevPos = player.pos; // save the previous pos
                 player.pos--; // move the player
+                return 1;
             } else {
                 return 0;
             }
@@ -36,6 +82,7 @@ var player = {
             if (![0, 1, 2].includes(player.pos)) {
                 player.prevPos = player.pos; // save the previous pos
                 player.pos -= 3; // move the player
+                return 1;
             } else {
                 return 0;
             }
@@ -45,6 +92,7 @@ var player = {
             if (![2, 5, 8].includes(player.pos)) {
                 player.prevPos = player.pos; // save the previous pos
                 player.pos++; // move the player
+                return 1;
             } else {
                 return 0;
             }
@@ -54,6 +102,7 @@ var player = {
             if (![6, 7, 8].includes(player.pos)) {
                 player.prevPos = player.pos; // save the previous pos
                 player.pos += 3; // move the player
+                return 1;
             } else {
                 return 0;
             }
@@ -114,7 +163,14 @@ function httpGetAsync(theUrl, callback)
 document.addEventListener('keydown', function(event) {
     if (moveAllowed) {
         // move the player
-        player.move(event.keyCode - 37);
+        if (player.move(event.keyCode - 37)) {
+            while (true) {
+                if (enemy.move(Math.floor((Math.random() * 4) + 0))) {
+                    break
+                }
+            }
+        }
+
         moveCount++;
 
         checkDeath();
@@ -123,8 +179,22 @@ document.addEventListener('keydown', function(event) {
         placeEntitys();
 
         if (dead) {
-            name = prompt('Your score is ' + moveCount + ', enter your name to save your score', 'name');
-            httpGetAsync('?page=saveScore&name='+name+'&score='+moveCount);
+            var name = prompt('Your score is ' + moveCount + ', enter your name to save your score (cancel to not save)', '');
+            if (name != null && name != '') {
+                httpGetAsync('?page=saveScore&name='+name+'&score='+moveCount);
+            }
+
+            moveAllowed = true;
+            moveCount   = 0;
+            dead        = false;
+            enemy.pos   = 8;
+            player.pos  = 0;
+
+            for (let i = 0; i < 9; i++) {
+                board[i].style = 'background-color: ' + colours.board;
+            }
+
+            placeEntitys();
         }
     }
 }, true);
