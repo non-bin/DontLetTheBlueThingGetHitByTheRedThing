@@ -1,3 +1,8 @@
+body {
+    background-color: black;
+    color: whitesmoke;
+}
+
 .game {
     margin: 0;
     position: absolute;
@@ -12,6 +17,36 @@
     background-color: #b9b9b9;
 }
 
-.gameText {
-    font-family: "Lucida Sans Unicode", "Lucida Grande", sans-serif;
+.leaderNo0 {
+    color: rgb(245, 119, 119);
+}
+.leaderNo1 {
+    color: rgb(245, 176, 119);
+}
+.leaderNo2 {
+    color: rgb(245, 243, 119);
+}
+.leaderNo3 {
+    color: rgb(176, 245, 119);
+}
+.leaderNo4 {
+    color: rgb(119, 245, 146);
+}
+.leaderNo5 {
+    color: rgb(119, 188, 245);
+}
+.leaderNo6 {
+    color: rgb(119, 121, 245);
+}
+.leaderNo {
+    color: rgb(163, 119, 245);
+}
+.leaderNo7 {
+    color: rgb(235, 119, 245);
+}
+.leaderNo8 {
+    color: rgb(245, 119, 178);
+}
+.leaderNo9 {
+    color: rgb(245, 119, 119);
 }

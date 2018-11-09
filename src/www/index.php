@@ -1,7 +1,7 @@
 <?php
 
-$file = fopen('../scoreboard', 'r');
-$scoreboard = unserialize(fgets($file));
+$file = fopen('../scoreboard.json', 'r');
+$scoreboard = json_decode(fgets($file));
 fclose($file);
 
 if (isset($_GET['page'])) {
@@ -11,12 +11,22 @@ if (isset($_GET['page'])) {
             break;
 
         case 'saveScore':
-            if (isset($_GET['name'], $_GET['score'])) {
-                $scoreboard[] = [$_GET['name'], $_GET['score']];
-                usort($scoreboard, "cmp");
-                // array_pop($scoreboard);
-                $file = fopen('../scoreboard', 'w');
-                fwrite($file, serialize($scoreboard));
+            if (isset($_GET['score'])) {
+                $score = (int)$_GET['score'];
+
+                if (isset($_GET['name'])) {
+                    $scoreboard[] = [$_GET['name'], $score];
+                    usort($scoreboard, "cmp");
+                    array_pop($scoreboard);
+
+                    $file = fopen('../scoreboard.json', 'w');
+                    fwrite($file, json_encode($scoreboard));
+                    fclose($file);
+                }
+
+                $file = fopen('../scores.json', 'r+');
+                fseek($file, -2, SEEK_END);
+                fwrite($file, ','.$score."]\n");
                 fclose($file);
             }
             break;

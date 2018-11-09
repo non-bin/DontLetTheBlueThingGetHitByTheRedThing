@@ -116,6 +116,8 @@ var player = {
 }
 
 // game init
+var scoreDisplay = document.getElementById('currentScore');
+
 var board = [];
 for (var i = 0; i < 9; i++) {
     board.push(document.getElementById('GS' + i));
@@ -147,15 +149,10 @@ function checkDeath() {
     }
 }
 
-function httpGetAsync(theUrl, callback)
+function httpGetAsync(theUrl)
 {
     var xmlHttp = new XMLHttpRequest();
-    xmlHttp.onreadystatechange = function() {
-        if (xmlHttp.readyState == 4 && xmlHttp.status == 200) {
-            callback(xmlHttp.responseText);
-        }
-    }
-    xmlHttp.open("GET", theUrl, true); // true for asynchronous
+    xmlHttp.open("GET", theUrl, false); // true for asynchronous
     xmlHttp.send(null);
 }
 
@@ -164,37 +161,52 @@ document.addEventListener('keydown', function(event) {
     if (moveAllowed) {
         // move the player
         if (player.move(event.keyCode - 37)) {
-            while (true) {
-                if (enemy.move(Math.floor((Math.random() * 4) + 0))) {
-                    break
-                }
-            }
-        }
+            moveAllowed = false;
 
-        moveCount++;
-
-        checkDeath();
-
-        // draw the board
-        placeEntitys();
-
-        if (dead) {
-            var name = prompt('Your score is ' + moveCount + ', enter your name to save your score (cancel to not save)', '');
-            if (name != null && name != '') {
-                httpGetAsync('?page=saveScore&name='+name+'&score='+moveCount);
-            }
-
-            moveAllowed = true;
-            moveCount   = 0;
-            dead        = false;
-            enemy.pos   = 8;
-            player.pos  = 0;
-
-            for (let i = 0; i < 9; i++) {
-                board[i].style = 'background-color: ' + colours.board;
-            }
-
+            // draw the board
             placeEntitys();
+
+            setTimeout(() => {
+                while (true) {
+                    if (enemy.move(Math.floor((Math.random() * 4) + 0))) {
+                        break
+                    }
+                }
+
+                moveCount++;
+
+                scoreDisplay.innerHTML = moveCount;
+
+                checkDeath();
+
+                // draw the board
+                placeEntitys();
+
+                if (dead) {
+                    var name = prompt('Your score is ' + moveCount + ', enter your name to save your score (cancel to not save)', '');
+                    if (name != null && name != '') {
+                        httpGetAsync('?page=saveScore&name='+name+'&score='+moveCount);
+                    } else {
+                        httpGetAsync('?page=saveScore&score='+moveCount);
+                    }
+
+                    window.location.reload(true);
+
+                    moveAllowed = true;
+                    moveCount   = 0;
+                    dead        = false;
+                    enemy.pos   = 8;
+                    player.pos  = 0;
+
+                    for (let i = 0; i < 9; i++) {
+                        board[i].style = 'background-color: ' + colours.board;
+                    }
+
+                    placeEntitys();
+                }
+
+                moveAllowed = true;
+            }, 100);
         }
     }
 }, true);

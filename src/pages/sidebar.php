@@ -9,7 +9,7 @@
 
 for ($i=0; $i < 10; $i++) {
     if (isset($scoreboard[$i])) {
-        echo '<tr><td>'. $scoreboard[$i][0] .'</td><td>'. $scoreboard[$i][1] .'</td></tr>';
+        echo '<tr class="leaderNo'. $i .'"><td>'. $scoreboard[$i][0] .'</td><td>'. $scoreboard[$i][1] .'</td></tr>';
     }
 }
 

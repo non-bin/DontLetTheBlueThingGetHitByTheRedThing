@@ -30,6 +30,7 @@
                 </td>
                 <td>
                     <div class="sidebar">
+                        <div class="scoreDisplay">Current Score: <span id="currentScore">0</span></div><br>
                         <?php require '../pages/sidebar.php'; ?>
                     </div>
                 </td>
