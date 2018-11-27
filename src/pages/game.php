@@ -6,6 +6,7 @@
     <title>Don't Let The Blue Thing Touch The Red Thing</title>
 </head>
 <body>
+    <a class="navLink" href="?page=instructions">[How To Play]</a>
     <div class="game">
         <table>
             <tr>
