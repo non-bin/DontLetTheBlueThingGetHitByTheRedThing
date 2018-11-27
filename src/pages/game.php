@@ -6,7 +6,20 @@
     <title>Don't Let The Blue Thing Touch The Red Thing</title>
 </head>
 <body>
+    <?php
+    if (isset($_GET['style']) && $_GET['style'] == 'round') {
+        ?>
+        <style>
+            .gameSquare {
+                border-radius: 50%;
+            }
+        </style>
+        <?php
+    }
+    ?>
     <a class="navLink" href="?page=instructions">[How To Play]</a>
+    <a class="navLink" href="?">[Reset]</a>
+    <a class="navLink" href="?style=round">[Round]</a>
     <div class="game">
         <table>
             <tr>
