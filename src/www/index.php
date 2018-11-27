@@ -1,5 +1,7 @@
 <?php
 
+$actualySaveScores = true;
+
 $file = fopen('../scoreboard.json', 'r');
 $scoreboard = json_decode(fgets($file));
 fclose($file);
@@ -10,6 +12,10 @@ if (isset($_GET['page'])) {
             require '../pages/sidebar.php';
             break;
 
+        case 'instructions':
+            require '../pages/instructions.php';
+            break;
+
         case 'saveScore':
             if (isset($_GET['score'])) {
                 $score = (int)$_GET['score'];
@@ -17,17 +23,22 @@ if (isset($_GET['page'])) {
                 if (isset($_GET['name'])) {
                     $scoreboard[] = [$_GET['name'], $score];
                     usort($scoreboard, "cmp");
-                    array_pop($scoreboard);
+
+                    if (count($scoreboard) > 10) {
+                        array_pop($scoreboard);
+                    }
 
                     $file = fopen('../scoreboard.json', 'w');
                     fwrite($file, json_encode($scoreboard));
                     fclose($file);
                 }
 
-                $file = fopen('../scores.json', 'r+');
-                fseek($file, -2, SEEK_END);
-                fwrite($file, ','.$score."]\n");
-                fclose($file);
+                if ($actualySaveScores) {
+                    $file = fopen('../scores.json', 'r+');
+                    fseek($file, -2, SEEK_END);
+                    fwrite($file, ','.$score."]\n");
+                    fclose($file);
+                }
             }
             break;
 
@@ -45,8 +56,6 @@ function cmp($a, $b)
         return 0;
     }
     return ($a[1] > $b[1]) ? -1 : 1;
-
-    // return $a[1] <=> $b[1];
 }
 
 ?>

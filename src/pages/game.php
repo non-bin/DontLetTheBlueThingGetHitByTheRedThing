@@ -20,6 +20,7 @@
     <a class="navLink" href="?page=instructions">[How To Play]</a>
     <a class="navLink" href="?">[Reset]</a>
     <a class="navLink" href="?style=round">[Round]</a>
+    <a class="navLink" href="?style=wah">[Wah]</a>
     <div class="game">
         <table>
             <tr>
@@ -51,6 +52,14 @@
             </tr>
         </table>
     </div>
+
+    <?php
+
+    if (isset($_GET['style']) && $_GET['style'] == 'wah') {
+        echo '<div style="background-image: url(\'/img/death.gif\'); display: none;"></div>';
+    }
+
+    ?>
 
     <script src="js/main.js"></script>
 </body>

@@ -1,3 +1,5 @@
+const ENEMY_MOVE_DELAY = 25;
+
 // init variables
 var moveAllowed = true;
 var moveCount   = 0;
@@ -127,18 +129,38 @@ placeEntitys();
 
 // functions
 function placeEntitys() {
-    // clear the previous positions
-    board[enemy.prevPos].style  = 'background-color: ' + colours.board;
-    board[player.prevPos].style = 'background-color: ' + colours.board;
+    switch (findGetParameter('style')) {
+        case 'wah':
+            // clear the previous positions
+            board[enemy.prevPos].style  = '';
+            board[player.prevPos].style = '';
 
-    // place enemy
-    board[enemy.pos].style      = 'background-color: ' + colours.enemy;
+            // place enemy
+            board[enemy.pos].style      = 'background-image: url("/img/wah.gif")';
 
-    // place player
-    board[player.pos].style     = 'background-color: ' + colours.player;
+            // place player
+            board[player.pos].style     = 'background-image: url("/img/sanic.gif")';
 
-    if (dead) {
-        board[enemy.pos].style = 'background-color: ' + colours.death;
+            if (dead) {
+                board[enemy.pos].style = 'background-image: url("/img/death.gif")';
+            }
+            break;
+
+        default:
+            // clear the previous positions
+            board[enemy.prevPos].style  = '';
+            board[player.prevPos].style = '';
+
+            // place enemy
+            board[enemy.pos].style      = 'background-color: ' + colours.enemy;
+
+            // place player
+            board[player.pos].style     = 'background-color: ' + colours.player;
+
+            if (dead) {
+                board[enemy.pos].style = 'background-color: ' + colours.death;
+            }
+            break;
     }
 }
 
@@ -149,7 +171,20 @@ function checkDeath() {
     }
 }
 
-function httpGetAsync(theUrl)
+function findGetParameter(parameterName) {
+    var result = null,
+        tmp = [];
+    location.search
+        .substr(1)
+        .split("&")
+        .forEach(function (item) {
+          tmp = item.split("=");
+          if (tmp[0] === parameterName) result = decodeURIComponent(tmp[1]);
+        });
+    return result;
+}
+
+function httpGet(theUrl)
 {
     var xmlHttp = new XMLHttpRequest();
     xmlHttp.open("GET", theUrl, false); // true for asynchronous
@@ -182,31 +217,29 @@ document.addEventListener('keydown', function(event) {
                 // draw the board
                 placeEntitys();
 
-                if (dead) {
-                    var name = prompt('Your score is ' + moveCount + ', enter your name to save your score (cancel to not save)', '');
-                    if (name != null && name != '') {
-                        httpGetAsync('?page=saveScore&name='+name+'&score='+moveCount);
-                    } else {
-                        httpGetAsync('?page=saveScore&score='+moveCount);
-                    }
-
-                    window.location.reload(true);
-
-                    moveAllowed = true;
-                    moveCount   = 0;
-                    dead        = false;
-                    enemy.pos   = 8;
-                    player.pos  = 0;
-
-                    for (let i = 0; i < 9; i++) {
-                        board[i].style = 'background-color: ' + colours.board;
-                    }
-
-                    placeEntitys();
+                if (findGetParameter('style') == 'wah') {
+                    delay = 1200;
+                } else {
+                    delay = 50;
                 }
 
-                moveAllowed = true;
-            }, 100);
+                if (dead) {
+                    setTimeout(() => {
+                        var name = prompt('Your score is ' + moveCount + ', enter your name to save your score (cancel to not save)', '');
+                        if (name != null && name != '' && findGetParameter('style') != 'wah') {
+                            httpGet('?page=saveScore&name='+name+'&score='+moveCount);
+                        } else if (findGetParameter('style') == 'wah') {
+                            httpGet('?page=saveScore&name=WAAAAHHHH&score='+moveCount);
+                        } else {
+                            httpGet('?page=saveScore&name=noOne&score='+moveCount);
+                        }
+
+                        window.location.reload(true)
+                    }, delay);
+                } else {
+                    moveAllowed = true;
+                }
+            }, ENEMY_MOVE_DELAY);
         }
     }
 }, true);
